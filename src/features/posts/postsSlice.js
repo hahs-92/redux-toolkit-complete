@@ -99,6 +99,8 @@ const postsSlice = createSlice({
 
         // Add any fetched posts to the array
         state.posts = loadedPosts;
+
+        //de esta manera a causa del useEffect me duplica la data
         // state.posts = state.posts.concat(loadedPosts);
       })
       .addCase(fetchPosts.rejected, (state, action) => {
@@ -116,7 +118,7 @@ const postsSlice = createSlice({
           rocket: 0,
           coffee: 0,
         };
-        console.log(action.payload);
+
         state.posts.push(action.payload);
       });
     // .addCase(updatePost.fulfilled, (state, action) => {
