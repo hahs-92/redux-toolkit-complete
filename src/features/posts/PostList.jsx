@@ -12,21 +12,9 @@ import {
 
 export function PostList() {
   const dispatch = useDispatch();
-  //   const posts = useSelector((state) => state.posts.posts);
   const posts = useSelector(selectAllPosts);
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
-
-  /*
-  //no se puede mutar el state(redux-toolkit)
-  const orderedPosts = [...posts]
-    //.slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
-
-  const renderPosts = orderedPosts.map((post) => (
-    <PostExcerpt key={post.id} post={post} />
-  ));
-  */
 
   let content;
   if (postsStatus === "loading") {
@@ -48,11 +36,5 @@ export function PostList() {
     }
   }, [postsStatus, dispatch]);
 
-  return (
-    <section>
-      <h2>Posts</h2>
-      {/* {renderPosts} */}
-      {content}
-    </section>
-  );
+  return <section>{content}</section>;
 }
