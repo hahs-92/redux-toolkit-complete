@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 //components
 import { PostsExcerpt } from "./PostsExcerpt";
@@ -7,11 +6,10 @@ import {
   selectAllPosts,
   getPostsStatus,
   getPostsError,
-  fetchPosts,
+  // fetchPosts,
 } from "./postsSlice";
 
 export function PostList() {
-  const dispatch = useDispatch();
   const posts = useSelector(selectAllPosts);
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
@@ -30,11 +28,13 @@ export function PostList() {
     content = <p>{error}</p>;
   }
 
-  useEffect(() => {
-    if (postsStatus === "idle") {
-      dispatch(fetchPosts());
-    }
-  }, [postsStatus, dispatch]);
+  // se esta realizando el fectch desde el main
+
+  // useEffect(() => {
+  //   if (postsStatus === "idle") {
+  //     dispatch(fetchPosts());
+  //   }
+  // }, [postsStatus, dispatch]);
 
   return <section>{content}</section>;
 }

@@ -150,8 +150,8 @@ const postsSlice = createSlice({
       })
       .addCase(updatePost.fulfilled, (state, action) => {
         if (!action.payload?.id) {
-          // console.log("Update could not complete");
-          // console.log(action.payload);
+          console.log("Update could not complete");
+          console.log(action.payload);
           return;
         }
         const { id } = action.payload;
