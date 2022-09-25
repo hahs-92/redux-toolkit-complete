@@ -5,10 +5,13 @@ import {
   createSelector,
   createEntityAdapter,
 } from "@reduxjs/toolkit";
-import axios from "axios";
+//import axios from "axios";
 import { sub } from "date-fns";
 
-const POSTS_URL = "https://jsonplaceholder.typicode.com/posts";
+//slices
+import { apiSlice } from "../api/apiSlice";
+
+//const POSTS_URL = "https://jsonplaceholder.typicode.com/posts";
 
 //optimization adapter
 const postsAdapter = createEntityAdapter({
@@ -21,13 +24,15 @@ const postsAdapter = createEntityAdapter({
 //   error: null,
 //   count: 0,
 // };
-const initialState = postsAdapter.getInitialState({
-  status: "idle", // idle, loading, succeded, failed
-  error: null,
-  count: 0,
-});
+// const initialState = postsAdapter.getInitialState({
+//   status: "idle", // idle, loading, succeded, failed
+//   error: null,
+//   count: 0,
+// });
 
 //thunks
+//con el apiSlice ya no se utilizan estos thunks
+/*
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const response = await axios.get(POSTS_URL);
   return response.data;
@@ -67,7 +72,61 @@ export const deletePost = createAsyncThunk(
     return `${response?.status}: ${response?.statusText}`;
   }
 );
+*/
 
+// -----apiSlice---------
+const initialState = postsAdapter.getInitialState();
+
+export const extendedApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getPost: builder.query({
+      query: () => "/post",
+      transformResponse: (responseData) => {
+        let min = 1;
+        const loadedPosts = responseData.map((post) => {
+          if (!post?.date)
+            post.date = sub(new Date(), { minutes: min++ }).toISOString();
+          if (!post?.reactions)
+            post.reactions = {
+              thumbsUp: 0,
+              wow: 0,
+              heart: 0,
+              rocket: 0,
+              coffee: 0,
+            };
+          return post;
+        });
+        return postsAdapter.setAll(initialState, loadedPosts);
+      },
+      providesTags: (result, error, arg) => [
+        { type: "Post", id: "LIST" },
+        ...result.ids.map((id) => ({ type: "Post", id })),
+      ],
+    }),
+  }),
+});
+
+const { useGetPostQuery } = extendedApiSlice;
+
+//return the query result object
+export const selectPostsResult = extendedApiSlice.endpoints.getPost.select();
+
+//creates memoized selector
+const selectPostData = createSelector(
+  selectPostsResult,
+  (postsResult) => postsResult.data // normalized state object with ids & entities
+);
+
+//selectors
+export const {
+  selectAll: selectAllPosts,
+  selectById: selectPostById,
+  selectIds: selectPostIds,
+  // Pass in a selector that returns the posts slice of state
+} = postsAdapter.getSelectors((state) => selectPostData(state) ?? initialState);
+
+//------------------esto es reemplazo por apiSlice--------------
+/*
 const postsSlice = createSlice({
   name: "posts",
   // initialState: [
@@ -227,3 +286,5 @@ export const { postAdded, reactionAdded, increaseCount } = postsSlice.actions;
 
 //reducer
 export default postsSlice.reducer;
+
+*/
