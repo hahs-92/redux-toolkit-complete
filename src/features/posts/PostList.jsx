@@ -7,14 +7,32 @@ import {
   selectPostIds,
   getPostsStatus,
   getPostsError,
+  useGetPostQuery,
   // fetchPosts,
 } from "./postsSlice";
 
 export function PostList() {
+  const { isError, isLoading, isSuccess, error } = useGetPostQuery();
+  const orderedPostIds = useSelector(selectPostIds);
+
+  let content;
+  if (isLoading) {
+    content = <p>"Loading..."</p>;
+  } else if (isSuccess) {
+    content = orderedPostIds.map((postId) => (
+      <PostsExcerpt key={postId} postId={postId} />
+    ));
+  } else if (isError) {
+    content = <p>{error}</p>;
+  }
+
+  return <section>{content}</section>;
+  /*
   const orderedPostIds = useSelector(selectPostIds);
   // const posts = useSelector(selectAllPosts);
   const postsStatus = useSelector(getPostsStatus);
   const error = useSelector(getPostsError);
+
 
   let content;
   if (postsStatus === "loading") {
@@ -42,4 +60,5 @@ export function PostList() {
   // }, [postsStatus, dispatch]);
 
   return <section>{content}</section>;
+  */
 }
