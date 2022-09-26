@@ -17,4 +17,5 @@ export const store = configureStore({
   //necesarios para cuando s etrabaja con rtk y redux
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
+  devTools: true,
 });
